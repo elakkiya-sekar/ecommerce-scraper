@@ -1,0 +1,9 @@
+# Ignore local SQLite database files
+*.db
+*.sqlite3
+
+# Ignore Python cache & environment files
+__pycache__/
+*.pyc
+.venv/
+.vscode/
