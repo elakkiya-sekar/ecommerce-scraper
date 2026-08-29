@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <title></title>
+        <style>
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid black; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+</style>
+    </head>
+    <body>
+        <table>
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Price</th>
+                <th>rating</th>
+            </tr>
+                
+        </thead>
+        <tbody id="table-body">
+
+        </tbody>
+            
+        </table>
+
+
+        <script>
+            fetch("http://127.0.0.1:8000/books")
+            .then(response=>response.json())
+            .then(data=>{
+                let rows="";
+                data.forEach(book=>{
+                    rows+=`<tr><td>${book.id}</td>
+                        <td>${book.title}</td>
+                        <td>${book.price}</td>
+                        <td>${book.rating}</td>
+                        </tr>`;
+                });
+                document.getElementById("table-body").innerHTML=rows;
+            })
+            .catch(error => console.error(error));
+        </script>
+    </body>
+</html>
