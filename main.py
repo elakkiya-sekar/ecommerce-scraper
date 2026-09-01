@@ -24,18 +24,21 @@ def read_root():
 
 
 @app.get("/books")
-def get_all_books():
-        conn=get_db_connection()
-        cursor=conn.cursor()
-        cursor.execute("SELECT * FROM book_database")
-        rows=cursor.fetchall()
-        conn.close()
-        books = []
-        for row in rows:
-            books.append({
-            "id": row[0],
-            "title": row[1],
-            "price": row[2],
-            "rating": row[3]
-        })
-        return books
+def get_books(rating: str=None, max_price: float=None):
+    query="SELECT id, title, price, rating FROM book_database WHERE 1=1"
+    param=[]
+    if rating:
+        query+=" AND rating=?"
+        param.append(rating)
+    if max_price:
+         query+=" AND price <=?"
+         param.append(max_price)
+    
+   
+    conn=get_db_connection()
+    cursor=conn.cursor()
+    cursor.execute(query, param)
+           
+    rows=cursor.fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
