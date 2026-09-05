@@ -12,7 +12,11 @@
         <h2>Book Catalog</h2>
 
         <div class="filter-container">
+            <label for="search-input">Search Title:</label>
+            <input type="text" id="search-input" placeholder="e.g. Secret">
+
             <label for="rating-select">Rating: </label>
+
             <select id="rating-select">
                 <option value="">All</option>
                 <option value="One">One</option>
@@ -43,8 +47,11 @@
 
         <script>
             function loadBooks() {
+            
                 const rating = document.getElementById("rating-select").value;
                 const maxPrice = document.getElementById("max-price-input").value;
+                const title=document.getElementById("search-input").value;
+
 
                 // Dynamically append query parameters if options are selected
                 let url = "http://127.0.0.1:8000/books?";
@@ -56,7 +63,9 @@
                 if (maxPrice) {
                     params.append("max_price", maxPrice);
                 }
-
+                if (title){
+                    params.append("title", title);
+                }
                 url += params.toString();
 
                 fetch(url)

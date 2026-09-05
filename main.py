@@ -24,7 +24,7 @@ def read_root():
 
 
 @app.get("/books")
-def get_books(rating: str=None, max_price: float=None):
+def get_books(title: str = None, rating: str=None, max_price: float=None):
     query="SELECT id, title, price, rating FROM book_database WHERE 1=1"
     param=[]
     if rating:
@@ -33,7 +33,9 @@ def get_books(rating: str=None, max_price: float=None):
     if max_price:
          query+=" AND price <=?"
          param.append(max_price)
-    
+    if title:
+        query+=" AND title LIKE ?"
+        param.append(f"{title.strip()}%")
    
     conn=get_db_connection()
     cursor=conn.cursor()
