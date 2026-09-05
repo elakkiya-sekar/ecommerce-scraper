@@ -1,45 +1,83 @@
 <html>
     <head>
-        <title></title>
+        <title>Book Scraper Dashboard</title>
         <style>
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid black; padding: 8px; text-align: left; }
-    th { background-color: #f2f2f2; }
-</style>
+            table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+            th, td { border: 1px solid black; padding: 8px; text-align: left; }
+            th { background-color: #f2f2f2; }
+            .filter-container { margin-bottom: 15px; }
+        </style>
     </head>
     <body>
+        <h2>Book Catalog</h2>
+
+        <div class="filter-container">
+            <label for="rating-select">Rating: </label>
+            <select id="rating-select">
+                <option value="">All</option>
+                <option value="One">One</option>
+                <option value="Two">Two</option>
+                <option value="Three">Three</option>
+                <option value="Four">Four</option>
+                <option value="Five">Five</option>
+            </select>
+
+            <label for="max-price-input">Max Price (£): </label>
+            <input type="number" id="max-price-input" placeholder="e.g. 30" step="0.01">
+
+            <button onclick="loadBooks()">Filter</button>
+        </div>
+
         <table>
             <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Price</th>
-                <th>rating</th>
-            </tr>
-                
-        </thead>
-        <tbody id="table-body">
-
-        </tbody>
-            
+                <tr>
+                    <th>Id</th>
+                    <th>Title</th>
+                    <th>Price</th>
+                    <th>Rating</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+            </tbody>
         </table>
 
-
         <script>
-            fetch("http://127.0.0.1:8000/books")
-            .then(response=>response.json())
-            .then(data=>{
-                let rows="";
-                data.forEach(book=>{
-                    rows+=`<tr><td>${book.id}</td>
-                        <td>${book.title}</td>
-                        <td>${book.price}</td>
-                        <td>${book.rating}</td>
-                        </tr>`;
-                });
-                document.getElementById("table-body").innerHTML=rows;
-            })
-            .catch(error => console.error(error));
+            function loadBooks() {
+                const rating = document.getElementById("rating-select").value;
+                const maxPrice = document.getElementById("max-price-input").value;
+
+                // Dynamically append query parameters if options are selected
+                let url = "http://127.0.0.1:8000/books?";
+                const params = new URLSearchParams();
+
+                if (rating) {
+                    params.append("rating", rating);
+                }
+                if (maxPrice) {
+                    params.append("max_price", maxPrice);
+                }
+
+                url += params.toString();
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        let rows = "";
+                        data.forEach(book => {
+                            rows += `<tr>
+                                <td>${book.id}</td>
+                                <td>${book.title}</td>
+                                <td>£${book.price}</td>
+                                <td>${book.rating}</td>
+                            </tr>`;
+                        });
+                        document.getElementById("table-body").innerHTML = rows;
+                    })
+                    .catch(error => console.error("Error fetching books:", error));
+            }
+
+            // Automatically load all books when page first loads
+            loadBooks();
         </script>
     </body>
 </html>
